@@ -33,9 +33,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         TextView textView = findViewById(R.id.textView);
 
-        queue = Volley.newRequestQueue(this);
+//        queue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = getJsonArrayRequest();
+        JsonObjectRequest jsonObjectRequest = getJsonObjectRequest(textView);
+        // Use singleton class
+        queue = MySingleton.getInstance(this.getApplicationContext())
+                .getRequestQueue();
+
+        queue.add(jsonArrayRequest);
+        queue.add(jsonObjectRequest);
+
+        getString(queue);
+
+    }
+
+    @NonNull
+    private JsonObjectRequest getJsonObjectRequest(TextView textView) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, getApiUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -53,12 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        queue.add(jsonArrayRequest);
-        queue.add(jsonObjectRequest);
-
-        getString(queue);
-
+        return jsonObjectRequest;
     }
 
     @NonNull
